@@ -1,0 +1,2 @@
+ErrorDocument 404 /SIGERUTT/error/404.php
+ErrorDocument 500 /SIGERUTT/error/500.php

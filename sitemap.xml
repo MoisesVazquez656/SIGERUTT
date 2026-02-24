@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>http://localhost/SIGERUTT/index.php</loc></url>
+  <url><loc>http://localhost/SIGERUTT/login.php</loc></url>
+  <url><loc>http://localhost/SIGERUTT/buscar.php</loc></url>
+
+  <url><loc>http://localhost/SIGERUTT/registrar_ruta_dinamica.php</loc></url>
+  <url><loc>http://localhost/SIGERUTT/registrar_vehiculo.php</loc></url>
+  <url><loc>http://localhost/SIGERUTT/registrar_operador.php</loc></url>
+  <url><loc>http://localhost/SIGERUTT/asignaciones.php</loc></url>
+
+  <url><loc>http://localhost/SIGERUTT/ver_rutas.php</loc></url>
+  <url><loc>http://localhost/SIGERUTT/ver_vehiculos.php</loc></url>
+  <url><loc>http://localhost/SIGERUTT/ver_operadores.php</loc></url>
+  <url><loc>http://localhost/SIGERUTT/ver_asignaciones.php</loc></url>
+  <url><loc>http://localhost/SIGERUTT/ver_usuarios.php</loc></url>
+</urlset>
