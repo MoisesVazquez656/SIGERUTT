@@ -39,9 +39,12 @@ if (!$usuario) {
     <label>Rol:</label>
     <select name="rol" required>
         <option value="">Seleccione un rol</option>
-        <option value="admin" <?php if ($usuario['rol'] == 'admin') echo 'selected'; ?>>Administrador</option>
-        <option value="supervisor" <?php if ($usuario['rol'] == 'supervisor') echo 'selected'; ?>>Supervisor</option>
-        <option value="operador" <?php if ($usuario['rol'] == 'operador') echo 'selected'; ?>>Operador</option>
+        <option value="admin" <?php if ($usuario['rol'] == 'admin')
+            echo 'selected'; ?>>Administrador</option>
+        <option value="supervisor" <?php if ($usuario['rol'] == 'supervisor')
+            echo 'selected'; ?>>Supervisor</option>
+        <option value="operador" <?php if ($usuario['rol'] == 'operador')
+            echo 'selected'; ?>>Operador</option>
     </select>
 
     <button type="submit">Actualizar Usuario</button>
@@ -49,5 +52,4 @@ if (!$usuario) {
 
 <a href="../ver_usuarios.php" class="boton-regresar">Regresar al Menú Anterior</a>
 
-<script src="../js/scripts.js"></script>
 <?php include '../footer.php'; ?>

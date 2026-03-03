@@ -41,8 +41,12 @@ if (!$operador) {
 
     <label>Disponibilidad:</label>
     <select name="disponibilidad" required>
-        <option value="disponible" <?php if ($operador['disponibilidad'] == 'disponible') echo 'selected'; ?>>Disponible</option>
-        <option value="no disponible" <?php if ($operador['disponibilidad'] == 'no disponible') echo 'selected'; ?>>No Disponible</option>
+        <option value="disponible" <?php if ($operador['disponibilidad'] == 'disponible')
+            echo 'selected'; ?>>Disponible
+        </option>
+        <option value="no disponible" <?php if ($operador['disponibilidad'] == 'no disponible')
+            echo 'selected'; ?>>No
+            Disponible</option>
     </select>
 
     <button type="submit">Actualizar Operador</button>
@@ -50,5 +54,4 @@ if (!$operador) {
 
 <a href="../ver_operadores.php" class="boton-regresar">Regresar al Menú Anterior</a>
 
-<script src="../js/scripts.js"></script>
 <?php include '../footer.php'; ?>

@@ -57,7 +57,8 @@ $operadores = $stmt_operadores->fetchAll(PDO::FETCH_ASSOC);
     <select name="id_vehiculo" required>
         <option value="">Selecciona un vehículo</option>
         <?php foreach ($vehiculos as $vehiculo) { ?>
-            <option value="<?php echo $vehiculo['id_vehiculo']; ?>"><?php echo htmlspecialchars($vehiculo['placa']); ?></option>
+            <option value="<?php echo $vehiculo['id_vehiculo']; ?>"><?php echo htmlspecialchars($vehiculo['placa']); ?>
+            </option>
         <?php } ?>
     </select><br><br>
 
@@ -65,7 +66,8 @@ $operadores = $stmt_operadores->fetchAll(PDO::FETCH_ASSOC);
     <select name="id_operador" required>
         <option value="">Selecciona un operador</option>
         <?php foreach ($operadores as $operador) { ?>
-            <option value="<?php echo $operador['id_operador']; ?>"><?php echo htmlspecialchars($operador['nombre']); ?></option>
+            <option value="<?php echo $operador['id_operador']; ?>"><?php echo htmlspecialchars($operador['nombre']); ?>
+            </option>
         <?php } ?>
     </select><br><br>
 
@@ -76,7 +78,5 @@ $operadores = $stmt_operadores->fetchAll(PDO::FETCH_ASSOC);
 </form>
 
 <a href="index.php" class="boton-regresar">Regresar al Menú Principal</a>
-
-<script src="js/scripts.js"></script>
 
 <?php include 'footer.php'; ?>

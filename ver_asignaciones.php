@@ -34,7 +34,8 @@ $asignaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td><?php echo htmlspecialchars($asignacion['nombre']); ?></td>
                 <td><?php echo htmlspecialchars($asignacion['fecha_asignacion']); ?></td>
                 <td>
-                    <a href="javascript:void(0);" class="accion-eliminar" data-url="php/eliminar_asignacion.php?id=<?php echo $asignacion['id_asignacion']; ?>">Eliminar</a>
+                    <a href="javascript:void(0);" class="accion-eliminar"
+                        data-url="php/eliminar_asignacion.php?id=<?php echo $asignacion['id_asignacion']; ?>">Eliminar</a>
                     <a href="php/editar_asignacion.php?id=<?php echo $asignacion['id_asignacion']; ?>">Editar</a>
                     <a href="ver_mapa.php?id=<?php echo $asignacion['id_ruta']; ?>&origen=ver_asignaciones.php">Ver Mapa</a>
                 </td>
@@ -47,5 +48,4 @@ $asignaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <a href="index.php" class="boton-regresar">Regresar al Menú Principal</a>
 
-<script src="js/scripts.js"></script>
 <?php include 'footer.php'; ?>

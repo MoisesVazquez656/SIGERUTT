@@ -289,13 +289,13 @@ ORDER BY asig.fecha_asignacion DESC;
 ---
 
 ## Códigos de Mensajería
-| `?mensaje=` | Significado | Destino |
+| Respuesta JSON | Significado | Entrega |
 |-------------|-------------|---------|
-| `exito` | Asignación creada correctamente. | `ver_asignaciones.php` |
-| `actualizado` | Asignación modificada. | `ver_asignaciones.php` |
-| `eliminado` | Asignación cancelada. | `ver_asignaciones.php` |
-| `campos_vacios` | Faltan campos requeridos. | Formulario origen |
-| `error` | Fallo en INSERT/UPDATE de BD. | Formulario origen |
+| `{status:"ok", mensaje:"Asignación creada..."}` | Asignación creada correctamente. | JSON (AJAX) |
+| `{status:"ok", mensaje:"Asignación actualizada..."}` | Asignación modificada. | JSON (AJAX) |
+| `{status:"ok", mensaje:"Asignación eliminada..."}` | Asignación cancelada. | JSON (AJAX) |
+| `{status:"error", mensaje:"Todos los campos..."}` | Faltan campos requeridos. | JSON (AJAX) |
+| `{status:"error", mensaje:"Error..."} ` | Fallo en INSERT/UPDATE de BD. | JSON (AJAX) |
 
 ---
 

@@ -3,6 +3,21 @@ require_once __DIR__ . '/../helpers.php';
 require_admin();
 require_once __DIR__ . '/conexion.php';
 
+// Detectar si es petición AJAX
+$esAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+    strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+function responder($esAjax, $redirectUrl, $status, $mensaje)
+{
+    if ($esAjax) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['status' => $status, 'mensaje' => $mensaje]);
+        exit;
+    }
+    header('Location: ' . $redirectUrl);
+    exit;
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Sanitizar entradas
     $nombre = trim($_POST['nombre'] ?? '');
@@ -12,19 +27,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Validar campos vacíos
     if ($nombre === '' || $correo === '' || $contraseña === '' || $rol === '') {
-        header('Location: ' . BASE_URL . 'registrar_usuario.php?mensaje=campos');
-        exit;
+        responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=campos', 'error', 'Todos los campos son obligatorios.');
     }
 
     if (!valid_email($correo)) {
-        header('Location: ' . BASE_URL . 'registrar_usuario.php?mensaje=error');
-        exit;
+        responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=error', 'error', 'Correo no válido.');
     }
 
     // Validar longitud mínima de contraseña
     if (strlen($contraseña) < 6) {
-        header('Location: ' . BASE_URL . 'registrar_usuario.php?mensaje=contraseña');
-        exit;
+        responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=contraseña', 'error', 'La contraseña debe tener al menos 6 caracteres.');
     }
 
     // Verificar si el nombre completo ya existe (sin importar mayúsculas)
@@ -33,8 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt_nombre->execute([$nombre]);
 
     if ($stmt_nombre->fetch()) {
-        header('Location: ' . BASE_URL . 'registrar_usuario.php?mensaje=nombre_repetido');
-        exit;
+        responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=nombre_repetido', 'error', 'El nombre completo ya está registrado.');
     }
 
     // Verificar si el correo ya existe (sin importar mayúsculas)
@@ -43,8 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt_correo->execute([$correo]);
 
     if ($stmt_correo->fetch()) {
-        header('Location: ' . BASE_URL . 'registrar_usuario.php?mensaje=correo_repetido');
-        exit;
+        responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=correo_repetido', 'error', 'El correo ya está registrado.');
     }
 
     // Cifrar contraseña
@@ -55,14 +65,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt_insert = $conexion->prepare($sql_insert);
 
     if ($stmt_insert->execute([$nombre, $correo, $contraseña_segura, $rol])) {
-        header('Location: ' . BASE_URL . 'registrar_usuario.php?mensaje=exito');
-        exit;
+        responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=exito', 'ok', 'Usuario registrado correctamente.');
     } else {
-        header('Location: ' . BASE_URL . 'registrar_usuario.php?mensaje=error');
-        exit;
+        responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=error', 'error', 'Error al registrar el usuario.');
     }
 } else {
-    header('Location: ' . BASE_URL . 'registrar_usuario.php');
-    exit;
+    responder($esAjax, BASE_URL . 'registrar_usuario.php', 'error', 'Método no permitido.');
 }
 ?>

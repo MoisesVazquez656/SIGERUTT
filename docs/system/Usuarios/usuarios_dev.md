@@ -301,20 +301,21 @@ Aplicado en cada carga de página protegida del módulo.
 ---
 
 ## Códigos de Respuesta y Parámetros de Mensajería
-| Parámetro GET (`?mensaje=`) | Significado | Pantalla destino |
-|-----------------------------|-------------|-----------------|
-| `exito` | Usuario registrado correctamente. | `ver_usuarios.php` |
-| `actualizado` | Datos del usuario actualizados. | `ver_usuarios.php` |
-| `eliminado` | Usuario eliminado del sistema. | `ver_usuarios.php` |
-| `duplicado` | Nombre o correo ya registrados. | Formulario origen |
-| `pass_corta` | Contraseña menor a 6 caracteres. | Formulario origen |
-| `email_invalido` | Formato de email incorrecto. | Formulario origen |
-| `campos_vacios` | Uno o más campos requeridos vacíos. | Formulario origen |
+| Respuesta | Significado | Entrega |
+|-----------------------------|-------------|---------|
+| `{status:"ok", mensaje:...}` | Usuario registrado correctamente. | JSON (AJAX) |
+| `{status:"ok", mensaje:...}` | Datos del usuario actualizados. | JSON (AJAX) |
+| `{status:"ok", mensaje:...}` | Usuario eliminado del sistema. | JSON (AJAX) |
+| `{status:"error", mensaje:...}` | Nombre o correo ya registrados. | JSON (AJAX) |
+| `{status:"error", mensaje:...}` | Contraseña menor a 6 caracteres. | JSON (AJAX) |
+| `{status:"error", mensaje:...}` | Formato de email incorrecto. | JSON (AJAX) |
+| `{status:"error", mensaje:...}` | Uno o más campos requeridos vacíos. | JSON (AJAX) |
 
 ---
 
 ## Notas de Mantenimiento
-- **Contraseñas**: Gestionadas con `PASSWORD_DEFAULT` (Bcrypt en PHP >= 5.5). El hash resultante es de ~60 chars; el campo `contraseña` debe ser `VARCHAR(255)` para compatibilidad futura.
+- **Contraseñas**: Gestionadas con `PASSWORD_DEFAULT` (Bcrypt en PHP >= 5.5). El hash resultante es de ~60 chars; el campo `contraseña` debe ser `VARCHAR(255)` para compatibilidad futura. **Nota**: El nombre de la columna en la BD es `contraseña` (encoding Latin-1); los queries PHP deben usar ese nombre exacto.
+- **Respuestas AJAX**: Todos los handlers del módulo detectan la cabecera `X-Requested-With: XMLHttpRequest` y responden con `{status, mensaje}` JSON en lugar de redirecciones `302`.
 - **Eliminación Física**: La eliminación es un `DELETE` directo. No existe borrado lógico (soft delete). Si el usuario tiene registros relacionados, se generará error de FK constraint si existen relaciones futuras.
 - **`helpers.php`**: Contiene las funciones centralizadas `require_login()` y `require_admin()`. Modificar con cuidado ya que afecta a todos los módulos.
 - **Sin rate limiting**: El formulario de login/registro no tiene protección contra fuerza bruta. Considerar implementar `$_SESSION['intentos']` o integrar CAPTCHA en versiones futuras.

@@ -26,12 +26,13 @@ $rutas = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php foreach ($rutas as $ruta): ?>
             <tr>
                 <td><?php echo htmlspecialchars($ruta['nombre_ruta']); ?></td>
-                
+
                 <!-- Mostramos distancia total -->
                 <td><?php echo isset($ruta['distancia_total']) ? $ruta['distancia_total'] . ' km' : 'No calculada'; ?></td>
 
                 <td>
-                    <a href="javascript:void(0);" class="accion-eliminar" data-url="php/eliminar_ruta.php?id=<?php echo $ruta['id_ruta']; ?>">Eliminar</a>
+                    <a href="javascript:void(0);" class="accion-eliminar"
+                        data-url="php/eliminar_ruta.php?id=<?php echo $ruta['id_ruta']; ?>">Eliminar</a>
                     <a href="editar_ruta_dinamica.php?id=<?php echo $ruta['id_ruta']; ?>">Editar</a>
                     <a href="ver_mapa.php?id=<?php echo $ruta['id_ruta']; ?>&origen=ver_rutas.php">Ver Mapa</a>
                 </td>
@@ -44,5 +45,4 @@ $rutas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <a href="index.php" class="boton-regresar">Regresar al Menú Principal</a>
 
-<script src="js/scripts.js"></script>
 <?php include 'footer.php'; ?>

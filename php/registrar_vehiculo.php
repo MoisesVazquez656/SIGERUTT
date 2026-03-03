@@ -1,6 +1,21 @@
 <?php
 require 'conexion.php';
 
+// Detectar si es petición AJAX
+$esAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+    strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+function responder($esAjax, $redirectUrl, $status, $mensaje)
+{
+    if ($esAjax) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['status' => $status, 'mensaje' => $mensaje]);
+        exit;
+    }
+    header('Location: ' . $redirectUrl);
+    exit;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $placa = strtoupper(trim($_POST['placa']));
     $tipo = $_POST['tipo'];
@@ -21,18 +36,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ];
 
     if (empty($placa) || empty($tipo) || empty($estado)) {
-        header('Location: ../registrar_vehiculo.php?mensaje=campos');
-        exit;
+        responder($esAjax, '../registrar_vehiculo.php?mensaje=campos', 'error', 'Todos los campos son obligatorios.');
     }
 
     if (strlen($placa) !== 9) {
-        header('Location: ../registrar_vehiculo.php?mensaje=campos');
-        exit;
+        responder($esAjax, '../registrar_vehiculo.php?mensaje=campos', 'error', 'La placa debe tener exactamente 9 caracteres.');
     }
 
     if (!array_key_exists($tipo, $capacidades)) {
-        header('Location: ../registrar_vehiculo.php?mensaje=campos');
-        exit;
+        responder($esAjax, '../registrar_vehiculo.php?mensaje=campos', 'error', 'Tipo de vehículo no válido.');
     }
 
     $capacidad = $capacidades[$tipo];
@@ -42,22 +54,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt_check->execute([$placa]);
 
     if ($stmt_check->fetch()) {
-        header('Location: ../registrar_vehiculo.php?mensaje=placa_repetida');
-        exit;
+        responder($esAjax, '../registrar_vehiculo.php?mensaje=placa_repetida', 'error', 'La placa ya está registrada.');
     }
 
     $sql = "INSERT INTO vehiculos (placa, tipo, capacidad, estado) VALUES (?, ?, ?, ?)";
     $stmt = $conexion->prepare($sql);
 
     if ($stmt->execute([$placa, $tipo, $capacidad, $estado])) {
-        header('Location: ../registrar_vehiculo.php?mensaje=exito');
-        exit;
+        responder($esAjax, '../registrar_vehiculo.php?mensaje=exito', 'ok', 'Vehículo registrado correctamente.');
     } else {
-        header('Location: ../registrar_vehiculo.php?mensaje=error');
-        exit;
+        responder($esAjax, '../registrar_vehiculo.php?mensaje=error', 'error', 'Error al registrar el vehículo.');
     }
 } else {
-    header('Location: ../registrar_vehiculo.php');
-    exit;
+    responder($esAjax, '../registrar_vehiculo.php', 'error', 'Método no permitido.');
 }
 ?>

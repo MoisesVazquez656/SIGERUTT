@@ -60,6 +60,4 @@ include 'header.php';
 <br>
 <a href="index.php" class="boton-regresar">Regresar al Menú Principal</a>
 
-<script src="js/scripts.js"></script>
-
 <?php include 'footer.php'; ?>

@@ -58,7 +58,7 @@ $paradas = $stmt_paradas->fetchAll(PDO::FETCH_ASSOC);
         waypoints: [
             L.latLng(<?php echo $ruta['lat_origen']; ?>, <?php echo $ruta['lon_origen']; ?>),
             <?php foreach ($paradas as $parada): ?>
-                L.latLng(<?php echo $parada['latitud']; ?>, <?php echo $parada['longitud']; ?>),
+                            L.latLng(<?php echo $parada['latitud']; ?>, <?php echo $parada['longitud']; ?>),
             <?php endforeach; ?>
             L.latLng(<?php echo $ruta['lat_destino']; ?>, <?php echo $ruta['lon_destino']; ?>)
         ],

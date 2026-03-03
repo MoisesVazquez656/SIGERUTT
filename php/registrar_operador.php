@@ -1,6 +1,21 @@
 <?php
 require 'conexion.php';
 
+// Detectar si es petición AJAX
+$esAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+    strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+function responder($esAjax, $redirectUrl, $status, $mensaje)
+{
+    if ($esAjax) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['status' => $status, 'mensaje' => $mensaje]);
+        exit;
+    }
+    header('Location: ' . $redirectUrl);
+    exit;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre = filter_var($_POST['nombre'], FILTER_SANITIZE_STRING);
     $licencia = filter_var($_POST['licencia'], FILTER_SANITIZE_STRING);
@@ -8,8 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $disponibilidad = $_POST['disponibilidad'];
 
     if (empty($nombre) || empty($licencia) || empty($telefono) || empty($disponibilidad)) {
-        header('Location: ../registrar_operador.php?mensaje=campos');
-        exit;
+        responder($esAjax, '../registrar_operador.php?mensaje=campos', 'error', 'Todos los campos son obligatorios.');
     }
 
     // Verificar que la licencia no esté registrada (sin importar mayúsculas)
@@ -18,22 +32,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt_check->execute([$licencia]);
 
     if ($stmt_check->fetch()) {
-        header('Location: ../registrar_operador.php?mensaje=licencia_repetida');
-        exit;
+        responder($esAjax, '../registrar_operador.php?mensaje=licencia_repetida', 'error', 'La licencia ya está registrada.');
     }
 
     $sql = "INSERT INTO operadores (nombre, licencia, telefono, disponibilidad) VALUES (?, ?, ?, ?)";
     $stmt = $conexion->prepare($sql);
 
     if ($stmt->execute([$nombre, $licencia, $telefono, $disponibilidad])) {
-        header('Location: ../registrar_operador.php?mensaje=exito');
-        exit;
+        responder($esAjax, '../registrar_operador.php?mensaje=exito', 'ok', 'Operador registrado correctamente.');
     } else {
-        header('Location: ../registrar_operador.php?mensaje=error');
-        exit;
+        responder($esAjax, '../registrar_operador.php?mensaje=error', 'error', 'Error al registrar el operador.');
     }
 } else {
-    header('Location: ../registrar_operador.php');
-    exit;
+    responder($esAjax, '../registrar_operador.php', 'error', 'Método no permitido.');
 }
 ?>

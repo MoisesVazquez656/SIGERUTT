@@ -26,7 +26,8 @@ $operadores = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td><?php echo htmlspecialchars($operador['telefono']); ?></td>
                 <td><?php echo htmlspecialchars($operador['disponibilidad']); ?></td>
                 <td>
-                    <a href="javascript:void(0);" class="accion-eliminar" data-url="php/eliminar_operador.php?id=<?php echo $operador['id_operador']; ?>">Eliminar</a>
+                    <a href="javascript:void(0);" class="accion-eliminar"
+                        data-url="php/eliminar_operador.php?id=<?php echo $operador['id_operador']; ?>">Eliminar</a>
                     <a href="php/editar_operador.php?id=<?php echo $operador['id_operador']; ?>">Editar</a>
                 </td>
             </tr>
@@ -37,7 +38,5 @@ $operadores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <?php endif; ?>
 
 <a href="index.php" class="boton-regresar">Regresar al Menú Principal</a>
-
-<script src="js/scripts.js"></script>
 
 <?php include 'footer.php'; ?>

@@ -26,7 +26,8 @@ $vehiculos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td><?php echo htmlspecialchars($vehiculo['capacidad']); ?></td>
                 <td><?php echo htmlspecialchars($vehiculo['estado']); ?></td>
                 <td>
-                    <a href="javascript:void(0);" class="accion-eliminar" data-url="php/eliminar_vehiculo.php?id=<?php echo $vehiculo['id_vehiculo']; ?>">Eliminar</a>
+                    <a href="javascript:void(0);" class="accion-eliminar"
+                        data-url="php/eliminar_vehiculo.php?id=<?php echo $vehiculo['id_vehiculo']; ?>">Eliminar</a>
                     <a href="php/editar_vehiculo.php?id=<?php echo $vehiculo['id_vehiculo']; ?>">Editar</a>
                 </td>
             </tr>
@@ -37,7 +38,5 @@ $vehiculos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <?php endif; ?>
 
 <a href="index.php" class="boton-regresar">Regresar al Menú Principal</a>
-
-<script src="js/scripts.js"></script>
 
 <?php include 'footer.php'; ?>
