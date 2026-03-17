@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/config.php';
 
-// Si ya hay sesión, manda al menú
 if (!empty($_SESSION['id_usuario'])) {
     header('Location: ' . BASE_URL . 'index.php');
     exit;
@@ -29,7 +28,9 @@ $mensaje = $_GET['mensaje'] ?? '';
         <div id="mensaje-ajax"></div>
 
         <?php if ($mensaje !== ''): ?>
-            <div class="mensaje <?php echo ($mensaje === 'error' || $mensaje === 'server') ? 'error' : 'alerta'; ?>">
+            <div class="mensaje <?php
+                echo in_array($mensaje, ['error', 'server'], true) ? 'error' : 'alerta';
+            ?>">
                 <?php
                 if ($mensaje === 'error') {
                     echo 'Usuario o contraseña incorrectos.';
@@ -39,6 +40,12 @@ $mensaje = $_GET['mensaje'] ?? '';
                     echo 'Correo no válido.';
                 } elseif ($mensaje === 'server') {
                     echo 'Error del servidor. Intenta nuevamente.';
+                } elseif ($mensaje === 'timeout') {
+                    echo 'Tu sesión expiró por inactividad. Por favor, inicia sesión nuevamente.';
+                } elseif ($mensaje === 'sesion_cerrada') {
+                    echo 'Tu sesión fue cerrada porque se inició sesión en otro dispositivo.';
+                } elseif ($mensaje === 'contrasena_restablecida') {
+                    echo 'Contraseña restablecida correctamente. Inicia sesión con tu nueva contraseña.';
                 }
                 ?>
             </div>
@@ -48,14 +55,16 @@ $mensaje = $_GET['mensaje'] ?? '';
             <label for="correo">Correo:</label>
             <input type="email" name="correo" id="correo" required>
 
-            <label for="contraseña">contraseña:</label>
+            <label for="contraseña">Contraseña:</label>
             <input type="password" name="contraseña" id="contraseña" required>
 
             <button type="submit">Iniciar sesión</button>
         </form>
+
+        <a href="<?= BASE_URL ?>recuperar_contrasena.php">¿Olvidaste tu contraseña?</a>
     </div>
 
-    <script src="js/scripts.js"></script>
+    <script src="<?= BASE_URL ?>js/scripts.js"></script>
 
 </body>
 

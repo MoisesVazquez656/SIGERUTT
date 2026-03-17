@@ -1,5 +1,7 @@
 <?php
-require 'conexion.php';
+require_once __DIR__ . '/../helpers.php';
+require_admin();
+require_once __DIR__ . '/conexion.php';
 
 if (isset($_POST['nombre'])) {
     $nombre = strtolower(trim($_POST['nombre']));

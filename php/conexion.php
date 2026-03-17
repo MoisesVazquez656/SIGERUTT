@@ -1,13 +1,9 @@
 <?php
-$host = "localhost";
-$db = "sistema_rutas";
-$user = "root"; // Cambia si tu usuario es diferente
-$pass = "1234";     // Cambia si tienes contraseña
+require_once __DIR__ . '/db_config.php';
 
 try {
-    $conexion = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
+    $conexion = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8", DB_USER, DB_PASS);
     $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Error de conexión: " . $e->getMessage());
 }
-?>

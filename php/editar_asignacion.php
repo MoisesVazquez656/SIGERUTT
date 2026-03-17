@@ -1,5 +1,7 @@
 <?php
-require 'conexion.php';
+require_once __DIR__ . '/../helpers.php';
+require_login();
+require_once __DIR__ . '/conexion.php';
 
 // Verificar que exista el ID
 if (!isset($_GET['id'])) {

@@ -1,5 +1,7 @@
 <?php
-require 'conexion.php';
+require_once __DIR__ . '/../helpers.php';
+require_login();
+require_once __DIR__ . '/conexion.php';
 
 // Detectar si es petición AJAX
 $esAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&

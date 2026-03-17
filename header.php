@@ -20,7 +20,6 @@ $rol    = $_SESSION['rol'] ?? 'N/A';
 </head>
 <body>
 
-<!-- Header superior (título + buscador + usuario + iconos) -->
 <header class="header header-top">
     <h1>SIGERUTT - Sistema de Gestión de Rutas de Transporte Terrestre</h1>
 
@@ -31,30 +30,35 @@ $rol    = $_SESSION['rol'] ?? 'N/A';
         </form>
 
         <div class="header-user">
-            <div class="header-user-name"><?= htmlspecialchars($nombre) ?></div>
-            <div class="header-user-role">(Rol: <?= htmlspecialchars($rol) ?>)</div>
+            <a href="<?= BASE_URL ?>perfil.php" class="header-user-link" title="Mi Perfil">
+                <div class="header-user-name"><?= htmlspecialchars($nombre) ?></div>
+                <div class="header-user-role">(Rol: <?= htmlspecialchars($rol) ?>)</div>
+            </a>
         </div>
 
         <nav class="header-icons">
+            <a href="<?= BASE_URL ?>perfil.php" title="Mi Perfil"><i class="fa-solid fa-user-circle"></i></a>
             <a href="<?= BASE_URL ?>index.php" title="Inicio"><i class="fa-solid fa-house"></i></a>
             <a href="<?= BASE_URL ?>php/logout.php" title="Cerrar sesión"><i class="fa-solid fa-right-from-bracket"></i></a>
         </nav>
     </div>
 </header>
 
-<!-- Barra de navegación horizontal (solo las opciones que pediste) -->
 <nav class="nav-bar">
     <a href="<?= BASE_URL ?>sistemap.php" style="margin-top:0;">Mapa del sitio</a>
-    <?php if (($rol ?? '') === 'admin'): ?>
+
+    <?php if ($rol === 'admin'): ?>
         <a href="<?= BASE_URL ?>registrar_usuario.php">Nuevo usuario</a>
     <?php endif; ?>
 
-    <a href="<?= BASE_URL ?>registrar_ruta_dinamica.php">Nueva ruta</a>
-    <a href="<?= BASE_URL ?>registrar_vehiculo.php">Nuevo vehículo</a>
-    <a href="<?= BASE_URL ?>registrar_operador.php">Nuevo operador</a>
-    <a href="<?= BASE_URL ?>asignaciones.php">Asignar ruta</a>
+    <?php if (in_array($rol, ['admin', 'supervisor'], true)): ?>
+        <a href="<?= BASE_URL ?>registrar_ruta_dinamica.php">Nueva ruta</a>
+        <a href="<?= BASE_URL ?>registrar_vehiculo.php">Nuevo vehículo</a>
+        <a href="<?= BASE_URL ?>registrar_operador.php">Nuevo operador</a>
+        <a href="<?= BASE_URL ?>asignaciones.php">Asignar ruta</a>
+    <?php endif; ?>
 
-    <?php if (($rol ?? '') === 'admin'): ?>
+    <?php if ($rol === 'admin'): ?>
         <a href="<?= BASE_URL ?>ver_usuarios.php">Usuarios</a>
     <?php endif; ?>
 
@@ -62,6 +66,8 @@ $rol    = $_SESSION['rol'] ?? 'N/A';
     <a href="<?= BASE_URL ?>ver_vehiculos.php">Vehículos</a>
     <a href="<?= BASE_URL ?>ver_operadores.php">Operadores</a>
     <a href="<?= BASE_URL ?>ver_asignacion.php">Asignaciones</a>
+
+    <a href="<?= BASE_URL ?>perfil.php">Mi Perfil</a>
 </nav>
 
 <main class="contenido">

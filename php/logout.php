@@ -1,5 +1,16 @@
 <?php
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/conexion.php';
+
+// Limpiar session_id en BD antes de destruir la sesión
+if (!empty($_SESSION['id_usuario'])) {
+    try {
+        $stmt = $conexion->prepare("UPDATE usuarios SET session_id = NULL WHERE id_usuario = ?");
+        $stmt->execute([$_SESSION['id_usuario']]);
+    } catch (Throwable $e) {
+        // No bloquear el logout si falla la consulta
+    }
+}
 
 $_SESSION = [];
 

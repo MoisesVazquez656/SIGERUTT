@@ -2,7 +2,6 @@
 require_once __DIR__ . '/../helpers.php';
 require_once __DIR__ . '/conexion.php';
 
-// Detectar si es petición AJAX
 $esAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
     strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
@@ -46,6 +45,13 @@ try {
         $_SESSION['id_usuario'] = (int) $usuario['id_usuario'];
         $_SESSION['nombre'] = $usuario['nombre'];
         $_SESSION['rol'] = $usuario['rol'];
+        $_SESSION['ultima_actividad'] = time();
+
+        // Guardar session_id en BD para control de sesión única
+        $stmtSes = $conexion->prepare(
+            "UPDATE usuarios SET session_id = ? WHERE id_usuario = ?"
+        );
+        $stmtSes->execute([session_id(), $usuario['id_usuario']]);
 
         responder($esAjax, BASE_URL . 'index.php', 'ok', 'Inicio de sesión exitoso.');
     }

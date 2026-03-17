@@ -19,7 +19,10 @@ function responder($esAjax, $redirectUrl, $status, $mensaje)
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Sanitizar entradas
+    if (!validar_csrf()) {
+        responder($esAjax, BASE_URL . 'registrar_usuario.php', 'error', 'Token de seguridad inválido. Recarga la página.');
+    }
+
     $nombre = trim($_POST['nombre'] ?? '');
     $correo = trim($_POST['correo'] ?? '');
     $contraseña = $_POST['contraseña'] ?? '';

@@ -92,11 +92,21 @@ function nodeText(string $label): string {
     </div>
 
     <div class="tree-item">
+      <span class="tree-box">Mi Cuenta</span>
+      <div class="tree-children">
+        <?= nodeLink("Mi Perfil", BASE_URL . "perfil.php") ?>
+        <?= nodeLink("Editar perfil", BASE_URL . "editar_perfil.php") ?>
+        <?= nodeLink("Cambiar contraseña", BASE_URL . "cambiar_contrasena.php") ?>
+      </div>
+    </div>
+
+    <div class="tree-item">
       <span class="tree-box">Utilidades</span>
       <div class="tree-children">
         <?= nodeLink("Búsqueda global", BASE_URL . "buscar.php") ?>
         <?= nodeLink("Mapa del sitio", BASE_URL . "sitemap.php") ?>
         <span class="node sub">Login (público): login.php</span>
+        <span class="node sub">Recuperar contraseña (público)</span>
         <?= nodeLink("Cerrar sesión", BASE_URL . "php/logout.php") ?>
       </div>
     </div>

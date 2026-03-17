@@ -1,5 +1,9 @@
-<?php include 'header.php'; ?>
-<?php require 'php/conexion.php'; ?>
+<?php
+require_once __DIR__ . '/helpers.php';
+require_admin();
+include 'header.php';
+require 'php/conexion.php';
+?>
 
 <h2>Usuarios Registrados</h2>
 

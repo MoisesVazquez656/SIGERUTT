@@ -1,0 +1,14 @@
+{
+    "name": "sigerutt/sigerutt",
+    "description": "SIGERUTT - Sistema de Gestion de Rutas",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Javier Montero Pérez",
+            "email": "javiernew638@gmail.com"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^7.0"
+    }
+}

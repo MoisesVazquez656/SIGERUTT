@@ -1,5 +1,7 @@
 <?php
-require 'conexion.php';
+require_once __DIR__ . '/../helpers.php';
+require_admin();
+require_once __DIR__ . '/conexion.php';
 
 if (!isset($_GET['id'])) {
     header('Location: ../ver_usuarios.php');
@@ -28,6 +30,7 @@ if (!$usuario) {
 <?php endif; ?>
 
 <form action="actualizar_usuario.php" method="POST" id="formUsuario">
+    <input type="hidden" name="csrf_token" value="<?= generar_csrf() ?>">
     <input type="hidden" name="id_usuario" value="<?php echo $usuario['id_usuario']; ?>">
 
     <label>Nombre Completo:</label>

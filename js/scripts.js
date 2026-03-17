@@ -12,7 +12,6 @@
  * @param {HTMLElement|null} referencia - Elemento de referencia para insertar el mensaje antes de él
  */
 function mostrarMensaje(tipo, texto, referencia) {
-    // Eliminar mensajes previos
     let previos = document.querySelectorAll('.mensaje-ajax-dinamico');
     previos.forEach(m => m.remove());
 
@@ -20,11 +19,9 @@ function mostrarMensaje(tipo, texto, referencia) {
     div.className = 'mensaje ' + tipo + ' mensaje-ajax-dinamico';
     div.textContent = texto;
 
-    // Intentar insertar antes de una referencia lógica
     if (referencia) {
         referencia.parentNode.insertBefore(div, referencia);
     } else {
-        // Buscar el contenedor de contenido o el h2
         let h2 = document.querySelector('h2');
         if (h2) {
             h2.parentNode.insertBefore(div, h2.nextSibling);
@@ -33,7 +30,6 @@ function mostrarMensaje(tipo, texto, referencia) {
         }
     }
 
-    // Auto-ocultar después de 5 segundos
     setTimeout(() => {
         div.style.transition = 'opacity 0.5s';
         div.style.opacity = '0';
@@ -90,13 +86,11 @@ function eliminarRegistroAjax(url, fila) {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'ok') {
-                // Animación de desaparición
                 fila.style.transition = 'opacity 0.4s, transform 0.4s';
                 fila.style.opacity = '0';
                 fila.style.transform = 'translateX(-20px)';
                 setTimeout(() => {
                     fila.remove();
-                    // Si la tabla queda vacía, mostrar mensaje
                     let tabla = document.querySelector('table');
                     if (tabla && tabla.querySelectorAll('tr').length <= 1) {
                         tabla.remove();
@@ -137,7 +131,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             enviarFormularioAjax(this, function (data) {
-                // En login exitoso, redirigir
                 if (data.redirect) {
                     window.location.href = data.redirect;
                 }
@@ -157,7 +150,6 @@ document.addEventListener('DOMContentLoaded', function () {
             let contraseña = document.getElementsByName('contraseña')[0]?.value.trim() || '';
             let rol = document.getElementsByName('rol')[0]?.value || '';
 
-            // Si tiene campo contraseña, es registro; si no, es edición
             if (contraseña !== undefined && document.getElementsByName('contraseña')[0]) {
                 if (nombre === '' || correo === '' || contraseña === '' || rol === '') {
                     mostrarMensaje('alerta', 'Todos los campos son obligatorios.', this);
@@ -168,7 +160,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     return;
                 }
             } else {
-                // Edición de usuario (sin contraseña)
                 if (nombre === '' || correo === '' || rol === '') {
                     mostrarMensaje('alerta', 'Todos los campos son obligatorios.', this);
                     return;
@@ -184,7 +175,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // -----------------------------------------------
     if (document.getElementById('formVehiculo')) {
 
-        // Convertir a mayúsculas y limitar a 9 caracteres
         let placaInput = document.getElementById('placa');
         if (placaInput) {
             placaInput.addEventListener('input', function () {
@@ -193,7 +183,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // Asignar capacidad automáticamente según el tipo de vehículo
         let tipoSelect = document.getElementById('tipo');
         if (tipoSelect) {
             tipoSelect.addEventListener('change', function () {
@@ -217,7 +206,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // Envío AJAX
         document.getElementById('formVehiculo').addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -300,7 +288,6 @@ document.addEventListener('DOMContentLoaded', function () {
             enviarFormularioAjax(this, function (data) {
                 mostrarMensaje('exito', data.mensaje, formRutaMapa);
                 formRutaMapa.reset();
-                // Limpiar los campos ocultos del mapa
                 document.getElementById('origen').value = '';
                 document.getElementById('destino').value = '';
                 document.getElementById('paradas').value = '';
@@ -356,14 +343,117 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // -----------------------------------------------
-    // FORMULARIOS DE EDICIÓN GENÉRICOS (editar usuario, vehiculo, operador, asignacion)
-    // Se identifican por su acción que contiene "actualizar_"
+    // EDITAR PERFIL - Envío AJAX
+    // -----------------------------------------------
+    if (document.getElementById('formEditarPerfil')) {
+        document.getElementById('formEditarPerfil').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            let nombre = document.getElementsByName('nombre')[0].value.trim();
+            let correo = document.getElementsByName('correo')[0].value.trim();
+
+            if (nombre === '' || correo === '') {
+                mostrarMensaje('alerta', 'Todos los campos son obligatorios.', this);
+                return;
+            }
+
+            enviarFormularioAjax(this, function (data) {
+                mostrarMensaje('exito', data.mensaje, document.getElementById('formEditarPerfil'));
+            });
+        });
+    }
+
+    // -----------------------------------------------
+    // CAMBIAR CONTRASEÑA - Envío AJAX
+    // -----------------------------------------------
+    if (document.getElementById('formCambiarContrasena')) {
+        document.getElementById('formCambiarContrasena').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            let actual = document.getElementsByName('contrasena_actual')[0].value;
+            let nueva = document.getElementsByName('contrasena_nueva')[0].value;
+            let confirmar = document.getElementsByName('contrasena_confirmar')[0].value;
+
+            if (actual === '' || nueva === '' || confirmar === '') {
+                mostrarMensaje('alerta', 'Todos los campos son obligatorios.', this);
+                return;
+            }
+
+            if (nueva.length < 6) {
+                mostrarMensaje('alerta', 'La nueva contraseña debe tener al menos 6 caracteres.', this);
+                return;
+            }
+
+            if (nueva !== confirmar) {
+                mostrarMensaje('alerta', 'Las contraseñas nuevas no coinciden.', this);
+                return;
+            }
+
+            enviarFormularioAjax(this, function (data) {
+                mostrarMensaje('exito', data.mensaje, document.getElementById('formCambiarContrasena'));
+                document.getElementById('formCambiarContrasena').reset();
+            });
+        });
+    }
+
+    // -----------------------------------------------
+    // RECUPERAR CONTRASEÑA - Envío AJAX
+    // -----------------------------------------------
+    if (document.getElementById('formRecuperar')) {
+        document.getElementById('formRecuperar').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            let correo = document.getElementById('correo').value.trim();
+            if (correo === '') {
+                mostrarMensaje('alerta', 'Debes ingresar tu correo electrónico.', this);
+                return;
+            }
+
+            enviarFormularioAjax(this, function (data) {
+                mostrarMensaje('exito', data.mensaje, document.getElementById('formRecuperar'));
+            });
+        });
+    }
+
+    // -----------------------------------------------
+    // RESTABLECER CONTRASEÑA - Envío AJAX
+    // -----------------------------------------------
+    if (document.getElementById('formRestablecer')) {
+        document.getElementById('formRestablecer').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            let nueva = document.getElementsByName('contrasena_nueva')[0].value;
+            let confirmar = document.getElementsByName('contrasena_confirmar')[0].value;
+
+            if (nueva === '' || confirmar === '') {
+                mostrarMensaje('alerta', 'Todos los campos son obligatorios.', this);
+                return;
+            }
+
+            if (nueva.length < 6) {
+                mostrarMensaje('alerta', 'La contraseña debe tener al menos 6 caracteres.', this);
+                return;
+            }
+
+            if (nueva !== confirmar) {
+                mostrarMensaje('alerta', 'Las contraseñas no coinciden.', this);
+                return;
+            }
+
+            enviarFormularioAjax(this, function (data) {
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
+            });
+        });
+    }
+
+    // -----------------------------------------------
+    // FORMULARIOS DE EDICIÓN GENÉRICOS
     // -----------------------------------------------
     let formsEditar = document.querySelectorAll('form[action*="actualizar_usuario"], form[action*="actualizar_vehiculo"], form[action*="actualizar_operador"], form[action*="actualizar_asignacion"]');
     formsEditar.forEach(function (formEditar) {
-        // Evitar doble binding si ya fue capturado por formVehiculo o formOperador, etc.
-        if (formEditar.id === 'formVehiculo' || formEditar.id === 'formUsuario' || formEditar.id === 'formOperador' || formEditar.id === 'formAsignacion') {
-            // Ya fue manejado arriba, no hacer nada adicional
+        if (formEditar.id === 'formVehiculo' || formEditar.id === 'formUsuario' || formEditar.id === 'formOperador' || formEditar.id === 'formAsignacion' || formEditar.id === 'formEditarPerfil') {
             return;
         }
         formEditar.addEventListener('submit', function (e) {
@@ -385,7 +475,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (confirmacion) {
                 let url = this.getAttribute('data-url');
-                // Buscar la fila <tr> más cercana
                 let fila = this.closest('tr');
                 eliminarRegistroAjax(url, fila);
             }
@@ -393,12 +482,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // -----------------------------------------------
-    // BUSCADOR DEL HEADER (se mantiene igual, no es AJAX de backend)
+    // BUSCADOR DEL HEADER
     // -----------------------------------------------
 
 });
 
-// Buscador del header (simple) - Se mantiene fuera del DOMContentLoaded
 function validarBusquedaHeader() {
     var input = document.getElementById('q');
     if (!input) return true;

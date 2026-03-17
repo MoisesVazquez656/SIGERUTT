@@ -1,5 +1,7 @@
 <?php
-require 'conexion.php';
+require_once __DIR__ . '/../helpers.php';
+require_login();
+require_once __DIR__ . '/conexion.php';
 
 if (!isset($_GET['id'])) {
     header('Location: ../ver_vehiculos.php');

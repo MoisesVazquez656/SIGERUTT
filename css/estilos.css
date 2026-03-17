@@ -538,3 +538,89 @@ tr:nth-child(even) {
 @media (max-width: 620px){
   .tree-children{ min-width: 92vw; }
 }
+
+/* ====== PERFIL DE USUARIO ====== */
+.perfil-card{
+    max-width:480px;
+    margin:30px auto;
+    background:#ffffff;
+    border-radius:16px;
+    box-shadow:0 6px 18px rgba(0,0,0,.15);
+    padding:30px;
+    text-align:center;
+}
+
+.perfil-avatar{
+    margin-bottom:20px;
+}
+
+.perfil-avatar i{
+    font-size:80px;
+    color:#FF7F32;
+}
+
+.perfil-info{
+    text-align:left;
+    margin-bottom:24px;
+}
+
+.perfil-info p{
+    padding:10px 14px;
+    margin:8px 0;
+    background:#f7f7f7;
+    border-radius:8px;
+    border-left:4px solid #FF7F32;
+    font-size:15px;
+}
+
+.perfil-acciones{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.boton-perfil{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 20px;
+    border-radius:8px;
+    font-weight:bold;
+    text-decoration:none;
+    transition: background .2s ease, transform .2s ease;
+    background:#FF7F32;
+    color:#ffffff;
+    margin:0;
+}
+
+.boton-perfil:hover{
+    background:#FFA64D;
+    transform:scale(1.05);
+    color:#ffffff;
+    text-decoration:none;
+}
+
+.boton-perfil.boton-secundario{
+    background:#555555;
+}
+
+.boton-perfil.boton-secundario:hover{
+    background:#333333;
+}
+
+/* ====== HEADER USER LINK ====== */
+.header-user-link{
+    text-decoration:none;
+    color:#000000;
+    display:block;
+    text-align:right;
+    transition:opacity .2s ease;
+    margin:0;
+}
+
+.header-user-link:hover{
+    opacity:.75;
+    text-decoration:none;
+    color:#000000;
+}

@@ -37,6 +37,8 @@ include 'header.php';
 <h2>Registrar Usuario - SIGERUTT</h2>
 
 <form id="formUsuario" action="php/registrar_usuario.php" method="POST">
+    <input type="hidden" name="csrf_token" value="<?= generar_csrf() ?>">
+
     <label for="nombre">Nombre completo:</label>
     <input type="text" name="nombre" id="nombre" required><br><br>
 
