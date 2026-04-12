@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../helpers.php';
-require_login();
+require_role('admin', 'supervisor');
 require_once __DIR__ . '/conexion.php';
 
 if (!isset($_GET['id'])) {
@@ -30,6 +30,7 @@ if (!$operador) {
 <?php endif; ?>
 
 <form action="actualizar_operador.php" method="POST" id="formOperador">
+    <input type="hidden" name="csrf_token" value="<?= generar_csrf() ?>">
     <input type="hidden" name="id_operador" value="<?php echo $operador['id_operador']; ?>">
 
     <label>Nombre Completo:</label>

@@ -19,6 +19,7 @@
 <h2>Registrar Vehículo</h2>
 
 <form id="formVehiculo" action="php/registrar_vehiculo.php" method="POST">
+    <input type="hidden" name="csrf_token" value="<?= generar_csrf() ?>">
     <label for="placa">Placa (AB-345-CD):</label>
     <input type="text" name="placa" id="placa" maxlength="9" required><br><br>
 

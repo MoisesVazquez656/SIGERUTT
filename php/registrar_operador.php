@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../helpers.php';
-require_login();
+require_role('admin', 'supervisor');
 require_once __DIR__ . '/conexion.php';
 
 // Detectar si es petición AJAX
@@ -18,7 +18,11 @@ function responder($esAjax, $redirectUrl, $status, $mensaje)
     exit;
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!validar_csrf()) {
+        responder($esAjax, '../registrar_operador.php', 'error', 'Token de seguridad inválido.');
+    }
+}
     $nombre = filter_var($_POST['nombre'], FILTER_SANITIZE_STRING);
     $licencia = filter_var($_POST['licencia'], FILTER_SANITIZE_STRING);
     $telefono = filter_var($_POST['telefono'], FILTER_SANITIZE_STRING);

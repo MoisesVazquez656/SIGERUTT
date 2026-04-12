@@ -45,6 +45,7 @@ $operadores = $stmt_operadores->fetchAll(PDO::FETCH_ASSOC);
 <h2>Asignar Ruta a Vehículo y Operador</h2>
 
 <form id="formAsignacion" action="php/asignaciones.php" method="POST">
+    <input type="hidden" name="csrf_token" value="<?= generar_csrf() ?>">
     <label for="id_ruta">Ruta:</label>
     <select name="id_ruta" required>
         <option value="">Selecciona una ruta</option>

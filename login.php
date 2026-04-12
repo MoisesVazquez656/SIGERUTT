@@ -52,6 +52,7 @@ $mensaje = $_GET['mensaje'] ?? '';
         <?php endif; ?>
 
         <form id="formLogin" action="<?= BASE_URL ?>php/login.php" method="POST">
+            <input type="hidden" name="csrf_token" value="<?= generar_csrf() ?>">
             <label for="correo">Correo:</label>
             <input type="email" name="correo" id="correo" required>
 

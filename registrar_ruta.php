@@ -7,6 +7,7 @@
     <!-- Formulario -->
     <div class="formulario-limpio">
         <form action="php/registrar_ruta.php" method="POST">
+            <input type="hidden" name="csrf_token" value="<?= generar_csrf() ?>">
             <label>Nombre de la Ruta:</label>
             <input type="text" name="nombre_ruta" required>
 

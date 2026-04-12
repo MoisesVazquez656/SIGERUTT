@@ -20,6 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     responder($esAjax, BASE_URL . 'login.php', 'error', 'Método no permitido.');
 }
 
+if (!validar_csrf()) {
+    responder($esAjax, BASE_URL . 'login.php', 'error', 'Token de seguridad inválido.');
+}
+
 $correo = trim($_POST['correo'] ?? '');
 $contraseña = $_POST['contraseña'] ?? '';
 

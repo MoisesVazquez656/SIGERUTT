@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../helpers.php';
-require_login();
+require_role('admin', 'supervisor');
 require_once __DIR__ . '/conexion.php';
 
 // Verificar que exista el ID
@@ -50,6 +50,7 @@ $operadores = $stmtOperadores->fetchAll(PDO::FETCH_ASSOC);
 <?php endif; ?>
 
 <form action="actualizar_asignacion.php" method="POST" id="formAsignacion">
+    <input type="hidden" name="csrf_token" value="<?= generar_csrf() ?>">
     <input type="hidden" name="id_asignacion" value="<?php echo $asignacion['id_asignacion']; ?>">
 
     <label>Ruta:</label>

@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../helpers.php';
-require_login();
+require_role('admin', 'supervisor');
 require_once __DIR__ . '/conexion.php';
 
 // Detectar si es petición AJAX
@@ -16,6 +16,12 @@ function responder($esAjax, $redirectUrl, $status, $mensaje)
     }
     header('Location: ' . $redirectUrl);
     exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!validar_csrf()) {
+        responder($esAjax, '../ver_vehiculos.php', 'error', 'Token de seguridad inválido.');
+    }
 }
 
 if (isset($_POST['id_vehiculo'], $_POST['placa'], $_POST['tipo'], $_POST['capacidad'], $_POST['estado'])) {

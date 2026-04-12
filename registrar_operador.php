@@ -27,6 +27,7 @@
 <h2>Registrar Operador</h2>
 
 <form id="formOperador" action="php/registrar_operador.php" method="POST">
+    <input type="hidden" name="csrf_token" value="<?= generar_csrf() ?>">
     <label for="nombre">Nombre completo:</label>
     <input type="text" name="nombre" required><br><br>
 

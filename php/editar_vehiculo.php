@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../helpers.php';
-require_login();
+require_role('admin', 'supervisor');
 require_once __DIR__ . '/conexion.php';
 
 if (!isset($_GET['id'])) {
@@ -30,6 +30,7 @@ if (!$vehiculo) {
 <?php endif; ?>
 
 <form action="actualizar_vehiculo.php" method="POST" id="formVehiculo">
+    <input type="hidden" name="csrf_token" value="<?= generar_csrf() ?>">
     <input type="hidden" name="id_vehiculo" value="<?php echo $vehiculo['id_vehiculo']; ?>">
 
     <label>Placa:</label>
