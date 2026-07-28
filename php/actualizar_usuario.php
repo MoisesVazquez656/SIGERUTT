@@ -1,66 +1,43 @@
 <?php
 require_once __DIR__ . '/../helpers.php';
 require_admin();
-require_once __DIR__ . '/conexion.php';
-
-$esAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-    strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-
-function responder($esAjax, $redirectUrl, $status, $mensaje)
-{
-    if ($esAjax) {
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode(['status' => $status, 'mensaje' => $mensaje]);
-        exit;
-    }
-    header('Location: ' . $redirectUrl);
-    exit;
-}
+require_once __DIR__ . '/../api_client.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    responder($esAjax, '../ver_usuarios.php', 'error', 'Método no permitido.');
+    header('Location: ../ver_usuarios.php');
+    exit();
 }
 
 if (!validar_csrf()) {
-    responder($esAjax, '../ver_usuarios.php', 'error', 'Token de seguridad inválido. Recarga la página.');
+    header('Location: ../ver_usuarios.php');
+    exit();
 }
 
-if (!isset($_POST['id_usuario'], $_POST['nombre'], $_POST['correo'], $_POST['rol'])) {
-    responder($esAjax, '../ver_usuarios.php', 'error', 'Faltan datos obligatorios.');
-}
+if (isset($_POST['correo_actual'], $_POST['nombre'], $_POST['correo'], $_POST['rol'])) {
+    $correoActual = trim($_POST['correo_actual']);
+    $nombre = trim($_POST['nombre']);
+    $correo = trim($_POST['correo']);
+    $rol = trim($_POST['rol']);
 
-$id_usuario = (int) $_POST['id_usuario'];
-$nombre = trim($_POST['nombre']);
-$correo = trim($_POST['correo']);
-$rol = trim($_POST['rol']);
+    $respuesta = api_admin_actualizar_usuario($_SESSION['api_token'] ?? '', $correoActual, [
+        'nombre' => $nombre,
+        'email' => $correo,
+        'role' => $rol,
+    ]);
 
-if ($nombre === '' || $correo === '' || $rol === '') {
-    responder($esAjax, 'editar_usuario.php?id=' . $id_usuario, 'error', 'Todos los campos son obligatorios.');
-}
+    if ($respuesta['status'] === 401) {
+        header('Location: ../login.php');
+        exit();
+    }
 
-if (!valid_email($correo)) {
-    responder($esAjax, 'editar_usuario.php?id=' . $id_usuario, 'error', 'Correo no válido.');
-}
+    if ($respuesta['ok']) {
+        header('Location: editar_usuario.php?id=' . urlencode($correo) . '&mensaje=actualizado');
+        exit();
+    }
 
-// Verificar duplicado de nombre (excluyendo al usuario actual)
-$stmt = $conexion->prepare("SELECT id_usuario FROM usuarios WHERE LOWER(nombre) = LOWER(?) AND id_usuario != ?");
-$stmt->execute([$nombre, $id_usuario]);
-if ($stmt->fetch()) {
-    responder($esAjax, 'editar_usuario.php?id=' . $id_usuario, 'error', 'El nombre ya está registrado por otro usuario.');
-}
-
-// Verificar duplicado de correo (excluyendo al usuario actual)
-$stmt = $conexion->prepare("SELECT id_usuario FROM usuarios WHERE LOWER(correo) = LOWER(?) AND id_usuario != ?");
-$stmt->execute([$correo, $id_usuario]);
-if ($stmt->fetch()) {
-    responder($esAjax, 'editar_usuario.php?id=' . $id_usuario, 'error', 'El correo ya está registrado por otro usuario.');
-}
-
-$sql = "UPDATE usuarios SET nombre = :nombre, correo = :correo, rol = :rol WHERE id_usuario = :id";
-$stmt = $conexion->prepare($sql);
-
-if ($stmt->execute(['nombre' => $nombre, 'correo' => $correo, 'rol' => $rol, 'id' => $id_usuario])) {
-    responder($esAjax, 'editar_usuario.php?id=' . $id_usuario . '&mensaje=actualizado', 'ok', 'Usuario actualizado correctamente.');
+    header('Location: editar_usuario.php?id=' . urlencode($correoActual));
+    exit();
 } else {
-    responder($esAjax, 'editar_usuario.php?id=' . $id_usuario, 'error', 'Error al actualizar el usuario.');
+    header('Location: ../ver_usuarios.php');
+    exit();
 }

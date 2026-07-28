@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../helpers.php';
-require_once __DIR__ . '/conexion.php';
+require_once __DIR__ . '/../api_client.php';
 
 $esAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
     strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
@@ -31,32 +31,26 @@ if (!valid_email($correo)) {
     responder($esAjax, BASE_URL . 'login.php?mensaje=email', 'error', 'Correo no válido.');
 }
 
-try {
-    $sql = "SELECT id_usuario, nombre, correo, contraseña, rol
-            FROM usuarios
-            WHERE LOWER(correo) = LOWER(?)
-            LIMIT 1";
-    $stmt = $conexion->prepare($sql);
-    $stmt->execute([$correo]);
-    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$respuesta = api_login($correo, $contraseña);
 
-    if ($usuario && password_verify($contraseña, $usuario['contraseña'])) {
-        session_regenerate_id(true);
-        $_SESSION['id_usuario'] = (int) $usuario['id_usuario'];
-        $_SESSION['nombre'] = $usuario['nombre'];
-        $_SESSION['rol'] = $usuario['rol'];
-        $_SESSION['ultima_actividad'] = time();
+if ($respuesta['ok'] && isset($respuesta['body']['token'])) {
+    $body = $respuesta['body'];
 
-        // Guardar session_id en BD para control de sesión única
-        $stmtSes = $conexion->prepare(
-            "UPDATE usuarios SET session_id = ? WHERE id_usuario = ?"
-        );
-        $stmtSes->execute([session_id(), $usuario['id_usuario']]);
+    session_regenerate_id(true);
+    $_SESSION['id_usuario'] = $body['id'];
+    $_SESSION['nombre'] = $body['nombre'];
+    $_SESSION['correo'] = $correo;
+    $_SESSION['rol'] = $body['role'];
+    $_SESSION['api_token'] = $body['token'];
 
-        responder($esAjax, BASE_URL . 'index.php', 'ok', 'Inicio de sesión exitoso.');
-    }
-
-    responder($esAjax, BASE_URL . 'login.php?mensaje=error', 'error', 'Usuario o contraseña incorrectos.');
-} catch (Throwable $e) {
-    responder($esAjax, BASE_URL . 'login.php?mensaje=server', 'error', 'Error del servidor. Intenta nuevamente.');
+    header('Location: ' . BASE_URL . 'index.php');
+    exit;
 }
+
+if ($respuesta['status'] === 0) {
+    header('Location: ' . BASE_URL . 'login.php?mensaje=server');
+    exit;
+}
+
+header('Location: ' . BASE_URL . 'login.php?mensaje=error');
+exit;

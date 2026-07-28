@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../helpers.php';
 require_admin();
-require_once __DIR__ . '/conexion.php';
+require_once __DIR__ . '/../api_client.php';
 
 // Detectar si es petición AJAX
 $esAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
@@ -28,7 +28,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $contraseña = $_POST['contraseña'] ?? '';
     $rol = trim($_POST['rol'] ?? '');
 
-    // Validar campos vacíos
     if ($nombre === '' || $correo === '' || $contraseña === '' || $rol === '') {
         responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=campos', 'error', 'Todos los campos son obligatorios.');
     }
@@ -37,42 +36,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=error', 'error', 'Correo no válido.');
     }
 
-    // Validar longitud mínima de contraseña
     if (strlen($contraseña) < 6) {
         responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=contraseña', 'error', 'La contraseña debe tener al menos 6 caracteres.');
     }
 
-    // Verificar si el nombre completo ya existe (sin importar mayúsculas)
-    $sql_nombre = "SELECT * FROM usuarios WHERE LOWER(nombre) = LOWER(?)";
-    $stmt_nombre = $conexion->prepare($sql_nombre);
-    $stmt_nombre->execute([$nombre]);
+    $respuesta = api_admin_crear_usuario($_SESSION['api_token'] ?? '', $nombre, $correo, $contraseña, $rol);
 
-    if ($stmt_nombre->fetch()) {
-        responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=nombre_repetido', 'error', 'El nombre completo ya está registrado.');
+    if ($respuesta['ok']) {
+        header('Location: ' . BASE_URL . 'registrar_usuario.php?mensaje=exito');
+        exit;
     }
 
-    // Verificar si el correo ya existe (sin importar mayúsculas)
-    $sql_correo = "SELECT * FROM usuarios WHERE LOWER(correo) = LOWER(?)";
-    $stmt_correo = $conexion->prepare($sql_correo);
-    $stmt_correo->execute([$correo]);
-
-    if ($stmt_correo->fetch()) {
-        responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=correo_repetido', 'error', 'El correo ya está registrado.');
+    if ($respuesta['status'] === 401) {
+        header('Location: ' . BASE_URL . 'login.php?mensaje=server');
+        exit;
     }
 
-    // Cifrar contraseña
-    $contraseña_segura = password_hash($contraseña, PASSWORD_DEFAULT);
-
-    // Insertar usuario
-    $sql_insert = "INSERT INTO usuarios (nombre, correo, contraseña, rol) VALUES (?, ?, ?, ?)";
-    $stmt_insert = $conexion->prepare($sql_insert);
-
-    if ($stmt_insert->execute([$nombre, $correo, $contraseña_segura, $rol])) {
-        responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=exito', 'ok', 'Usuario registrado correctamente.');
-    } else {
-        responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=error', 'error', 'Error al registrar el usuario.');
+    if ($respuesta['status'] === 409) {
+        header('Location: ' . BASE_URL . 'registrar_usuario.php?mensaje=correo_repetido');
+        exit;
     }
+
+    header('Location: ' . BASE_URL . 'registrar_usuario.php?mensaje=error');
+    exit;
 } else {
     responder($esAjax, BASE_URL . 'registrar_usuario.php', 'error', 'Método no permitido.');
 }
-?>

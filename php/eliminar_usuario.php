@@ -1,26 +1,20 @@
 <?php
 require_once __DIR__ . '/../helpers.php';
 require_admin();
-require_once __DIR__ . '/conexion.php';
+require_once __DIR__ . '/../api_client.php';
 
 // Detectar si es petición AJAX
 $esAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
     strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
+if (isset($_GET['id']) && trim($_GET['id']) !== '') {
+    $email = $_GET['id'];
 
-    $sql = "DELETE FROM usuarios WHERE id_usuario = :id";
-    $stmt = $conexion->prepare($sql);
-    $resultado = $stmt->execute(['id' => $id]);
+    $respuesta = api_admin_eliminar_usuario($_SESSION['api_token'] ?? '', $email);
 
-    if ($esAjax) {
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode([
-            'status' => $resultado ? 'ok' : 'error',
-            'mensaje' => $resultado ? 'Usuario eliminado correctamente.' : 'Error al eliminar el usuario.'
-        ]);
-        exit;
+    if ($respuesta['status'] === 401) {
+        header('Location: ../login.php');
+        exit();
     }
 
     header('Location: ../ver_usuarios.php?mensaje=eliminado');
@@ -34,4 +28,3 @@ if (isset($_GET['id'])) {
     header('Location: ../ver_usuarios.php');
     exit();
 }
-?>

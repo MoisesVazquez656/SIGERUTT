@@ -1,0 +1,67 @@
+# Orquesta los 3 componentes de la entrega:
+#   - mysql: catalogos de rutas/vehiculos/operadores/asignaciones
+#   - api:   API propia (Flask) de registro/login de usuarios (repo "API")
+#   - web:   SIGERUTT (PHP), consume la API y el mapa (Leaflet/OpenStreetMap, gratis)
+#
+# Requiere que los repos API y SIGERUTT esten clonados como carpetas
+# hermanas, por ejemplo:
+#   proyecto/
+#     api/        <- clone de MoisesVazquez656/API
+#     SIGERUTT/   <- clone de MoisesVazquez656/SIGERUTT (aqui vive este archivo)
+#
+# Antes de levantar por primera vez, crea ../api/.env con SECRET_KEY
+# (ver ../api/.env.example).
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: sigerutt_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-1234}
+      MYSQL_DATABASE: sistema_rutas
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-1234}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ../api
+    container_name: sigerutt_api
+    restart: unless-stopped
+    env_file:
+      - ../api/.env
+    environment:
+      DB_PATH: data/userdata.db
+    volumes:
+      - api_data:/app/data
+    ports:
+      - "5000:5000"
+
+  web:
+    build: .
+    container_name: sigerutt_web
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      api:
+        condition: service_started
+    environment:
+      DB_HOST: mysql
+      DB_NAME: sistema_rutas
+      DB_USER: root
+      DB_PASS: ${MYSQL_ROOT_PASSWORD:-1234}
+      API_BASE_URL: http://api:5000
+    ports:
+      - "80:80"
+
+volumes:
+  mysql_data:
+  api_data:

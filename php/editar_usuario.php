@@ -1,24 +1,28 @@
 <?php
 require_once __DIR__ . '/../helpers.php';
 require_admin();
-require_once __DIR__ . '/conexion.php';
+require_once __DIR__ . '/../api_client.php';
 
-if (!isset($_GET['id'])) {
+if (!isset($_GET['id']) || trim($_GET['id']) === '') {
     header('Location: ../ver_usuarios.php');
     exit();
 }
 
-$id = $_GET['id'];
+$email = $_GET['id'];
 
-$sql = "SELECT * FROM usuarios WHERE id_usuario = :id";
-$stmt = $conexion->prepare($sql);
-$stmt->execute(['id' => $id]);
-$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+$respuesta = api_admin_obtener_usuario($_SESSION['api_token'] ?? '', $email);
 
-if (!$usuario) {
+if ($respuesta['status'] === 401) {
+    header('Location: ../login.php');
+    exit();
+}
+
+if (!$respuesta['ok']) {
     header('Location: ../ver_usuarios.php');
     exit();
 }
+
+$usuario = $respuesta['body'];
 ?>
 
 <?php include '../header.php'; ?>
@@ -31,23 +35,20 @@ if (!$usuario) {
 
 <form action="actualizar_usuario.php" method="POST" id="formUsuario">
     <input type="hidden" name="csrf_token" value="<?= generar_csrf() ?>">
-    <input type="hidden" name="id_usuario" value="<?php echo $usuario['id_usuario']; ?>">
+    <input type="hidden" name="correo_actual" value="<?php echo htmlspecialchars($usuario['email']); ?>">
 
     <label>Nombre Completo:</label>
     <input type="text" name="nombre" value="<?php echo htmlspecialchars($usuario['nombre']); ?>" required>
 
     <label>Correo:</label>
-    <input type="email" name="correo" value="<?php echo htmlspecialchars($usuario['correo']); ?>" required>
+    <input type="email" name="correo" value="<?php echo htmlspecialchars($usuario['email']); ?>" required>
 
     <label>Rol:</label>
     <select name="rol" required>
         <option value="">Seleccione un rol</option>
-        <option value="admin" <?php if ($usuario['rol'] == 'admin')
-            echo 'selected'; ?>>Administrador</option>
-        <option value="supervisor" <?php if ($usuario['rol'] == 'supervisor')
-            echo 'selected'; ?>>Supervisor</option>
-        <option value="operador" <?php if ($usuario['rol'] == 'operador')
-            echo 'selected'; ?>>Operador</option>
+        <option value="admin" <?php if ($usuario['role'] == 'admin') echo 'selected'; ?>>Administrador</option>
+        <option value="supervisor" <?php if ($usuario['role'] == 'supervisor') echo 'selected'; ?>>Supervisor</option>
+        <option value="operador" <?php if ($usuario['role'] == 'operador') echo 'selected'; ?>>Operador</option>
     </select>
 
     <button type="submit">Actualizar Usuario</button>

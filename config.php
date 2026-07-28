@@ -17,3 +17,8 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $projectFolder = basename(__DIR__);
 define('BASE_URL', '/' . $projectFolder . '/');
+
+// URL de la API de usuarios (Flask). En Docker se define via variable de
+// entorno API_BASE_URL (ver docker-compose.yml); fuera de Docker cae a localhost.
+$apiUrl = getenv('API_BASE_URL');
+define('API_BASE_URL', ($apiUrl !== false && $apiUrl !== '') ? rtrim($apiUrl, '/') : 'http://localhost:5000');

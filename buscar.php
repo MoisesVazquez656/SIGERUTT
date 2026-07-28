@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/php/conexion.php';
+require_once __DIR__ . '/api_client.php';
 
 $q = trim($_GET['q'] ?? '');
 if ($q === '' || mb_strlen($q) < 2) {
@@ -19,14 +20,22 @@ $results = [
     'operadores' => [],
 ];
 
-try {
-    // Usuarios (si eres admin)
-    if (($_SESSION['rol'] ?? '') === 'admin') {
-        $st = $conexion->prepare("SELECT id_usuario, nombre, correo, rol FROM usuarios WHERE nombre LIKE ? OR correo LIKE ? LIMIT 20");
-        $st->execute([$like, $like]);
-        $results['usuarios'] = $st->fetchAll(PDO::FETCH_ASSOC);
+// Usuarios (si eres admin) - vienen de la API, se filtran aquí en PHP
+if (($_SESSION['rol'] ?? '') === 'admin') {
+    $respuestaUsuarios = api_admin_listar_usuarios($_SESSION['api_token'] ?? '');
+    if ($respuestaUsuarios['ok']) {
+        $qLower = mb_strtolower($q);
+        $results['usuarios'] = array_values(array_filter(
+            $respuestaUsuarios['body']['usuarios'] ?? [],
+            function ($u) use ($qLower) {
+                return str_contains(mb_strtolower($u['nombre']), $qLower)
+                    || str_contains(mb_strtolower($u['email']), $qLower);
+            }
+        ));
     }
+}
 
+try {
     // Rutas
     $st = $conexion->prepare("SELECT id_ruta, nombre_ruta, distancia_total FROM rutas WHERE nombre_ruta LIKE ? LIMIT 20");
     $st->execute([$like]);
@@ -59,10 +68,10 @@ try {
             <tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Rol</th></tr>
             <?php foreach ($results['usuarios'] as $u): ?>
                 <tr>
-                    <td><?= (int)$u['id_usuario'] ?></td>
+                    <td><?= (int)$u['id'] ?></td>
                     <td><?= htmlspecialchars($u['nombre']) ?></td>
-                    <td><?= htmlspecialchars($u['correo']) ?></td>
-                    <td><?= htmlspecialchars($u['rol']) ?></td>
+                    <td><?= htmlspecialchars($u['email']) ?></td>
+                    <td><?= htmlspecialchars($u['role']) ?></td>
                 </tr>
             <?php endforeach; ?>
         </table>

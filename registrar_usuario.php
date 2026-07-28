@@ -21,9 +21,6 @@ include 'header.php';
     } elseif ($_GET['mensaje'] == 'contraseña') {
         $tipoMensaje = 'alerta';
         $textoMensaje = 'La contraseña debe tener al menos 6 caracteres.';
-    } elseif ($_GET['mensaje'] == 'nombre_repetido') {
-        $tipoMensaje = 'alerta';
-        $textoMensaje = 'El nombre completo ya está registrado.';
     } elseif ($_GET['mensaje'] == 'correo_repetido') {
         $tipoMensaje = 'alerta';
         $textoMensaje = 'El correo ya está registrado.';
