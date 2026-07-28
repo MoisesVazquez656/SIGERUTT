@@ -32,11 +32,11 @@ services:
       retries: 10
 
   api:
-    build: ../api
+    build: ../SIGERUTT-API
     container_name: sigerutt_api
     restart: unless-stopped
     env_file:
-      - ../api/.env
+      - ../SIGERUTT-API/.env
     environment:
       DB_PATH: data/userdata.db
     volumes:
