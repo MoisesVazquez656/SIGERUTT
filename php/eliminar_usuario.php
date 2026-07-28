@@ -13,10 +13,20 @@ if (isset($_GET['id']) && trim($_GET['id']) !== '') {
     $respuesta = api_admin_eliminar_usuario($_SESSION['api_token'] ?? '', $email);
 
     if ($respuesta['status'] === 401) {
+        if ($esAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['status' => 'error', 'mensaje' => 'Sesión expirada. Inicia sesión nuevamente.']);
+            exit;
+        }
         header('Location: ../login.php');
         exit();
     }
 
+    if ($esAjax) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['status' => 'ok', 'mensaje' => 'Usuario eliminado correctamente.']);
+        exit;
+    }
     header('Location: ../ver_usuarios.php?mensaje=eliminado');
     exit();
 } else {

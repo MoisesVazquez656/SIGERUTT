@@ -43,22 +43,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $respuesta = api_admin_crear_usuario($_SESSION['api_token'] ?? '', $nombre, $correo, $contraseña, $rol);
 
     if ($respuesta['ok']) {
-        header('Location: ' . BASE_URL . 'registrar_usuario.php?mensaje=exito');
-        exit;
+        responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=exito', 'ok', 'Usuario registrado correctamente.');
     }
 
     if ($respuesta['status'] === 401) {
-        header('Location: ' . BASE_URL . 'login.php?mensaje=server');
-        exit;
+        responder($esAjax, BASE_URL . 'login.php?mensaje=server', 'error', 'Sesión expirada. Inicia sesión nuevamente.');
     }
 
     if ($respuesta['status'] === 409) {
-        header('Location: ' . BASE_URL . 'registrar_usuario.php?mensaje=correo_repetido');
-        exit;
+        responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=correo_repetido', 'error', 'Ese correo ya está registrado.');
     }
 
-    header('Location: ' . BASE_URL . 'registrar_usuario.php?mensaje=error');
-    exit;
+    responder($esAjax, BASE_URL . 'registrar_usuario.php?mensaje=error', 'error', 'No se pudo registrar el usuario. Intenta nuevamente.');
 } else {
     responder($esAjax, BASE_URL . 'registrar_usuario.php', 'error', 'Método no permitido.');
 }

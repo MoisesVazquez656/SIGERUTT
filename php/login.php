@@ -43,14 +43,11 @@ if ($respuesta['ok'] && isset($respuesta['body']['token'])) {
     $_SESSION['rol'] = $body['role'];
     $_SESSION['api_token'] = $body['token'];
 
-    header('Location: ' . BASE_URL . 'index.php');
-    exit;
+    responder($esAjax, BASE_URL . 'index.php', 'ok', 'Inicio de sesión exitoso.');
 }
 
 if ($respuesta['status'] === 0) {
-    header('Location: ' . BASE_URL . 'login.php?mensaje=server');
-    exit;
+    responder($esAjax, BASE_URL . 'login.php?mensaje=server', 'error', 'Error de conexión con el servidor. Intenta nuevamente.');
 }
 
-header('Location: ' . BASE_URL . 'login.php?mensaje=error');
-exit;
+responder($esAjax, BASE_URL . 'login.php?mensaje=error', 'error', 'Correo o contraseña incorrectos.');
